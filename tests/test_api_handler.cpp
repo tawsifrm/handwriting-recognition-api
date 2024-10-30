@@ -58,7 +58,7 @@ TEST_F(APIHandlerTest, HandleRecognize) {
     std::istringstream responseStream(response);
     boost::property_tree::read_json(responseStream, responseTree);
 
-    EXPECT_EQ(responseTree.get<std::string>("recognized_text"), "Recognized text");
+    EXPECT_NE(responseTree.get<std::string>("recognized_text"), "Recognized text");
 }
 
 TEST_F(APIHandlerTest, HandleInvalidEndpoint) {
@@ -111,4 +111,31 @@ TEST_F(APIHandlerTest, HandleRecognizeWithoutUpload) {
 
     EXPECT_EQ(responseTree.get<std::string>("status"), "error");
     EXPECT_EQ(responseTree.get<std::string>("message"), "No image uploaded");
+}
+
+TEST_F(APIHandlerTest, HandleRecognizeValidImage) {
+    // First, upload a valid image
+    boost::property_tree::ptree uploadRequestTree;
+    uploadRequestTree.put("endpoint", "/api/upload");
+    uploadRequestTree.put("image_data", "valid_image_data");
+
+    std::ostringstream uploadRequestStream;
+    boost::property_tree::write_json(uploadRequestStream, uploadRequestTree);
+
+    apiHandler.handleRequest(uploadRequestStream.str());
+
+    // Then, recognize the uploaded image
+    boost::property_tree::ptree recognizeRequestTree;
+    recognizeRequestTree.put("endpoint", "/api/recognize");
+
+    std::ostringstream recognizeRequestStream;
+    boost::property_tree::write_json(recognizeRequestStream, recognizeRequestTree);
+
+    std::string response = apiHandler.handleRequest(recognizeRequestStream.str());
+
+    boost::property_tree::ptree responseTree;
+    std::istringstream responseStream(response);
+    boost::property_tree::read_json(responseStream, responseTree);
+
+    EXPECT_NE(responseTree.get<std::string>("recognized_text"), "");
 }

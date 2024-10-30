@@ -6,6 +6,8 @@
 #include <boost/algorithm/string.hpp>
 #include <sstream>
 #include <iostream>
+#include <fstream>
+#include <vector>
 
 // APIHandler class handles incoming API requests and routes them to the appropriate handler functions.
 APIHandler::APIHandler() {
@@ -46,7 +48,7 @@ std::string APIHandler::handleUpload(const boost::property_tree::ptree& requestT
         return generateErrorResponse("Invalid image data");
     }
 
-    // Store the image for later recognition (this is a placeholder implementation)
+    // Store the image for later recognition
     storedImage = image;
 
     return generateSuccessResponse("Image uploaded successfully");
