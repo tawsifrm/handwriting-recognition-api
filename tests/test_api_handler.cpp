@@ -139,3 +139,49 @@ TEST_F(APIHandlerTest, HandleRecognizeValidImage) {
 
     EXPECT_NE(responseTree.get<std::string>("recognized_text"), "");
 }
+
+TEST_F(APIHandlerTest, RateLimitExceeded) {
+    boost::property_tree::ptree requestTree;
+    requestTree.put("endpoint", "/api/upload");
+    requestTree.put("image_data", "dummy_image_data");
+    requestTree.put("api_key", "test_api_key");
+
+    std::ostringstream requestStream;
+    boost::property_tree::write_json(requestStream, requestTree);
+
+    for (int i = 0; i < 101; ++i) {
+        apiHandler.handleRequest(requestStream.str());
+    }
+
+    std::string response = apiHandler.handleRequest(requestStream.str());
+
+    boost::property_tree::ptree responseTree;
+    std::istringstream responseStream(response);
+    boost::property_tree::read_json(responseStream, responseTree);
+
+    EXPECT_EQ(responseTree.get<std::string>("status"), "error");
+    EXPECT_EQ(responseTree.get<std::string>("message"), "Rate limit exceeded");
+}
+
+TEST_F(APIHandlerTest, RateLimitNotExceeded) {
+    boost::property_tree::ptree requestTree;
+    requestTree.put("endpoint", "/api/upload");
+    requestTree.put("image_data", "dummy_image_data");
+    requestTree.put("api_key", "test_api_key");
+
+    std::ostringstream requestStream;
+    boost::property_tree::write_json(requestStream, requestTree);
+
+    for (int i = 0; i < 100; ++i) {
+        apiHandler.handleRequest(requestStream.str());
+    }
+
+    std::string response = apiHandler.handleRequest(requestStream.str());
+
+    boost::property_tree::ptree responseTree;
+    std::istringstream responseStream(response);
+    boost::property_tree::read_json(responseStream, responseTree);
+
+    EXPECT_EQ(responseTree.get<std::string>("status"), "success");
+    EXPECT_EQ(responseTree.get<std::string>("message"), "Image uploaded successfully");
+}

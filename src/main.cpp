@@ -24,8 +24,14 @@ int main() {
 
             if (!error) {
                 APIHandler apiHandler;
-                std::string response = apiHandler.handleRequest(message);
-                write(socket, buffer(response), error);
+                std::string apiKey = "your_api_key"; // Replace with actual API key extraction logic
+                if (apiHandler.isRateLimited(apiKey)) {
+                    std::string response = apiHandler.generateErrorResponse("Rate limit exceeded");
+                    write(socket, buffer(response), error);
+                } else {
+                    std::string response = apiHandler.handleRequest(message);
+                    write(socket, buffer(response), error);
+                }
             } else {
                 std::cerr << "Error reading request: " << error.message() << std::endl;
             }

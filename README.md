@@ -85,6 +85,15 @@ Authorization: Bearer <your_token>
   - `400 Bad Request`: The request was invalid.
   - `401 Unauthorized`: Authentication failed.
 
+### Rate Limiting
+
+The API implements rate limiting using a token bucket algorithm to ensure fair usage and prevent abuse. Each API key is allocated a certain number of tokens, which are replenished at a fixed rate. When a request is made, a token is consumed. If no tokens are available, the request is rate limited and an error response is returned.
+
+#### Rate Limit Exceeded Response
+
+- **Response:**
+  - `429 Too Many Requests`: The rate limit has been exceeded. The response will include a message indicating that the rate limit has been exceeded.
+
 ## Usage Examples
 
 ### Uploading an Image
