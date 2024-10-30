@@ -6,6 +6,7 @@
 using namespace boost::asio;
 using ip::tcp;
 
+// Main function to start the server and handle incoming requests
 int main() {
     try {
         io_service io_service;
@@ -25,6 +26,8 @@ int main() {
                 APIHandler apiHandler;
                 std::string response = apiHandler.handleRequest(message);
                 write(socket, buffer(response), error);
+            } else {
+                std::cerr << "Error reading request: " << error.message() << std::endl;
             }
         }
     } catch (std::exception& e) {

@@ -1,6 +1,8 @@
 #include "authentication.h"
 #include <random>
+#include <iostream>
 
+// Authentication class handles API key generation and validation.
 Authentication::Authentication() {
     // Constructor implementation
 }
@@ -9,6 +11,7 @@ Authentication::~Authentication() {
     // Destructor implementation
 }
 
+// Generates a random API key and stores it in the apiKeys map.
 std::string Authentication::generateApiKey() {
     static const char alphanum[] =
         "0123456789"
@@ -28,6 +31,11 @@ std::string Authentication::generateApiKey() {
     return apiKey;
 }
 
+// Validates the given API key by checking if it exists in the apiKeys map.
 bool Authentication::validateApiKey(const std::string& apiKey) {
-    return apiKeys.find(apiKey) != apiKeys.end();
+    if (apiKeys.find(apiKey) == apiKeys.end()) {
+        std::cerr << "Invalid API key: " << apiKey << std::endl;
+        return false;
+    }
+    return true;
 }

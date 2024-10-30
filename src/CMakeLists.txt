@@ -17,3 +17,13 @@ add_executable(handwriting_recognition_api
 )
 
 target_link_libraries(handwriting_recognition_api ${OpenCV_LIBS} ${Boost_LIBRARIES})
+
+# Add configuration for continuous integration (CI) pipeline
+if(CMAKE_BUILD_TYPE STREQUAL "CI")
+    message(STATUS "Configuring for CI pipeline")
+    enable_testing()
+    add_subdirectory(tests)
+    add_test(NAME test_api_handler COMMAND test_api_handler)
+    add_test(NAME test_authentication COMMAND test_authentication)
+    add_test(NAME test_handwriting_recognizer COMMAND test_handwriting_recognizer)
+endif()

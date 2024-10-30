@@ -84,3 +84,51 @@ Authorization: Bearer <your_token>
   - `200 OK`: The recognized text in the requested format.
   - `400 Bad Request`: The request was invalid.
   - `401 Unauthorized`: Authentication failed.
+
+## Usage Examples
+
+### Uploading an Image
+
+To upload an image, use the following `curl` command:
+
+```sh
+curl -X POST http://localhost:8080/api/upload \
+  -H "Authorization: Bearer <your_token>" \
+  -F "image=@path_to_your_image_file"
+```
+
+### Recognizing Text
+
+To recognize text from the uploaded image, use the following `curl` command:
+
+```sh
+curl -X GET http://localhost:8080/api/recognize \
+  -H "Authorization: Bearer <your_token>"
+```
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Invalid API Key**: Ensure that you are using a valid API key in the `Authorization` header.
+2. **Invalid Image Data**: Ensure that the image file is in a supported format and not corrupted.
+3. **Server Not Running**: Ensure that the server is running and accessible at the specified URL and port.
+
+### Debugging Tips
+
+- Check the server logs for any error messages or stack traces.
+- Use tools like `curl` or Postman to test the API endpoints and verify the responses.
+- Ensure that all dependencies (e.g., OpenCV, Boost) are correctly installed and configured.
+
+## Contributing
+
+We welcome contributions to improve the Handwriting Recognition API. To contribute, please follow these guidelines:
+
+1. Fork the repository and create a new branch for your feature or bugfix.
+2. Write clear and concise commit messages.
+3. Ensure that your code follows the project's coding standards and passes all tests.
+4. Submit a pull request with a detailed description of your changes.
+
+## Code of Conduct
+
+We are committed to fostering a welcoming and inclusive community. Please read and follow our [Code of Conduct](CODE_OF_CONDUCT.md) to ensure a positive experience for all contributors and users.

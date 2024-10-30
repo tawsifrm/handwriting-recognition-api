@@ -60,3 +60,55 @@ TEST_F(APIHandlerTest, HandleRecognize) {
 
     EXPECT_EQ(responseTree.get<std::string>("recognized_text"), "Recognized text");
 }
+
+TEST_F(APIHandlerTest, HandleInvalidEndpoint) {
+    boost::property_tree::ptree requestTree;
+    requestTree.put("endpoint", "/api/invalid");
+
+    std::ostringstream requestStream;
+    boost::property_tree::write_json(requestStream, requestTree);
+
+    std::string response = apiHandler.handleRequest(requestStream.str());
+
+    boost::property_tree::ptree responseTree;
+    std::istringstream responseStream(response);
+    boost::property_tree::read_json(responseStream, responseTree);
+
+    EXPECT_EQ(responseTree.get<std::string>("status"), "error");
+    EXPECT_EQ(responseTree.get<std::string>("message"), "Invalid endpoint");
+}
+
+TEST_F(APIHandlerTest, HandleEmptyImageUpload) {
+    boost::property_tree::ptree requestTree;
+    requestTree.put("endpoint", "/api/upload");
+    requestTree.put("image_data", "");
+
+    std::ostringstream requestStream;
+    boost::property_tree::write_json(requestStream, requestTree);
+
+    std::string response = apiHandler.handleRequest(requestStream.str());
+
+    boost::property_tree::ptree responseTree;
+    std::istringstream responseStream(response);
+    boost::property_tree::read_json(responseStream, responseTree);
+
+    EXPECT_EQ(responseTree.get<std::string>("status"), "error");
+    EXPECT_EQ(responseTree.get<std::string>("message"), "Invalid image data");
+}
+
+TEST_F(APIHandlerTest, HandleRecognizeWithoutUpload) {
+    boost::property_tree::ptree requestTree;
+    requestTree.put("endpoint", "/api/recognize");
+
+    std::ostringstream requestStream;
+    boost::property_tree::write_json(requestStream, requestTree);
+
+    std::string response = apiHandler.handleRequest(requestStream.str());
+
+    boost::property_tree::ptree responseTree;
+    std::istringstream responseStream(response);
+    boost::property_tree::read_json(responseStream, responseTree);
+
+    EXPECT_EQ(responseTree.get<std::string>("status"), "error");
+    EXPECT_EQ(responseTree.get<std::string>("message"), "No image uploaded");
+}
